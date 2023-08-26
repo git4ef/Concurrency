@@ -4,57 +4,40 @@ import java.util.concurrent.Semaphore;
 
 public class Foo {
 
-    final Semaphore semaphore = new Semaphore(3, true);
+    final Semaphore semaphore = new Semaphore(1, true);
+    final Semaphore semaphore2 = new Semaphore(0, true);
 
-    public void first(Thread thread) {
-        while (semaphore.availablePermits() != 3) {
-            try {
-                thread.join();
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        thread.start();
-        System.out.println("first");
+
+    public void first() {
         try {
             semaphore.acquire();
+            System.out.println("first " + Thread.currentThread().getName());
+            semaphore2.release();
+        } catch (InterruptedException e) {
+        }
+    }
+
+
+    public void second() {
+        try {
+            semaphore2.acquire();
+            System.out.println("second " + Thread.currentThread().getName());
+            semaphore.release();
+            semaphore2.release();
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public void second(Thread thread) {
-        while (semaphore.availablePermits() != 2) {
-            try {
-                thread.join();
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        thread.start();
-        System.out.println("second");
-        try {
-            semaphore.acquire();
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
-    public void third(Thread thread) {
-        while (semaphore.availablePermits() != 1) {
-            try {
-                thread.join();
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        thread.start();
+    public void third() {
         try {
+            semaphore2.acquire();
             semaphore.acquire();
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        System.out.println("third");
+        System.out.println("third " + Thread.currentThread().getName());
     }
 }
 

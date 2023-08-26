@@ -1,6 +1,7 @@
 package ef;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executors;
 
 public class Main {
     public static void main(String[] args) throws RuntimeException, InterruptedException {
@@ -8,15 +9,15 @@ public class Main {
         Foo foo = new Foo();
 
         CompletableFuture.runAsync(() -> {
-            foo.second(new Thread());
+            foo.second();
         });
 
         CompletableFuture.runAsync(() -> {
-            foo.first(new Thread());
+            foo.first();
         });
 
         CompletableFuture.runAsync(() -> {
-            foo.third(new Thread());
+            foo.third();
         });
 
         Thread.sleep(2000);
